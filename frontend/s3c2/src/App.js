@@ -1,11 +1,13 @@
-import './App.css';
+import React from 'react';
+import LandingPage from './components/pages/LandingPage'; 
+import './App.css'; 
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <h1>Bienvenu dans Challange_2</h1>
+    <div className="app">
+      <LandingPage /> 
     </div>
   );
-}
+};
 
 export default App;
