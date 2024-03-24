@@ -29,13 +29,13 @@ def ask_about_algorithms(request):
     try:
         data = request.data
         question = data.get('question')
-        cities = data.get('cities')
+        # cities = data.get('cities')
 
-        if not question or not cities:
+        if not question :
             return HttpResponse({'error': 'No question provided'}, status=400)
         
-        city_names = list(cities.keys())
-        city_coordinates = {city: (cities[city]['latitude'], cities[city]['longitude']) for city in city_names}
+        # city_names = list(cities.keys())
+        # city_coordinates = {city: (cities[city]['latitude'], cities[city]['longitude']) for city in city_names}
 
         api_key = os.environ.get('OPENAI_API_KEY')
         if not api_key:
@@ -62,10 +62,10 @@ def ask_about_algorithms(request):
 
         if any(keyword in response_message.lower() for keyword in ["algorithm", "salesman", "approximation", "ant colony algorithm", "aco"]):
             # Inject city coordinates into the response
-            response_message += f"\n\nCity Coordinates:\n{city_coordinates}"
-            return HttpResponse({'response': response_message.strip()})
+            # response_message += f"\n\nCity Coordinates:\n{city_coordinates}"
+            return JsonResponse({'response': response_message.strip()})
         else:
-            return HttpResponse({'response': "Sorry, I am not programmed to answer this type of question."})
+            return JsonResponse({'response': "Sorry, I am not programmed to answer this type of question."})
     except Exception as e:
       return HttpResponse({'error': str(e)}, status=500)
 @api_view(['POST'])
