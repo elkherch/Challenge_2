@@ -1,10 +1,14 @@
+import json
+import os
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 import geopy
 from geopy.distance import geodesic
 
 from django.views.decorators.csrf import csrf_exempt
 
+import openai
 import openpyxl
 import networkx as nx
 
@@ -12,7 +16,59 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.parsers import FileUploadParser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from openai import OpenAI
 import openpyxl
+def initialize_openai_chatbot(api_key):
+    openai.api_key = api_key
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@api_view(['POST'])
+def ask_about_algorithms(request):
+    try:
+        data = request.data
+        question = data.get('question')
+        cities = data.get('cities')
+
+        if not question or not cities:
+            return Response({'error': 'No question provided'}, status=400)
+        
+        city_names = list(cities.keys())
+        city_coordinates = {city: (cities[city]['latitude'], cities[city]['longitude']) for city in city_names}
+
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            return Response({'error': 'OpenAI API key not found in environment variables'}, status=500)
+
+        client = OpenAI(api_key=api_key)
+
+       
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": question},
+            {"role": "assistant", "content":  f"""As an AI expert, explain '{question}' in the context of approximation algorithms, ant colony algorithms, or the traveling salesman problem."""
+}
+        ]
+        
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            temperature=0
+        )
+
+        response_message = response.choices[0].message.content
+
+
+        if any(keyword in response_message.lower() for keyword in ["algorithm", "salesman", "approximation", "ant colony algorithm", "aco"]):
+            # Inject city coordinates into the response
+            response_message += f"\n\nCity Coordinates:\n{city_coordinates}"
+            return Response({'response': response_message.strip()})
+        else:
+            return Response({'response': "Sorry, I am not programmed to answer this type of question."})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 def index(request):
     return render(request, 'index.html')
 @api_view(['POST'])
@@ -31,10 +87,12 @@ def read_cities_from_excel(excel_path):
     wb = openpyxl.load_workbook(excel_path)
     sheet = wb.active
     cities = {}
+    city_list = []  # Initialize a list to store city names
     for row in sheet.iter_rows(min_row=2, values_only=True):
         city_name, latitude, longitude = row
         cities[city_name] = (latitude, longitude)
-    return cities;
+        city_list.append(city_name)  # Append city name to the list
+    return cities, city_list
 
 def calculate_distance_matrix(cities):
     city_names = list(cities.keys())
@@ -49,7 +107,7 @@ def calculate_distance_matrix(cities):
     return distances, city_names
 
 def solve_tsp_approximation(distances, city_names):
-    # Create a complete graph
+    
     G = nx.Graph()
     for city1 in city_names:
         for city2 in city_names:
@@ -102,7 +160,7 @@ import  numpy as np
 import networkx as nx
 
 class AntSystemNetworkX:
-    def __init__(self, distance_matrix, num_ants, alpha=1, beta=2, rho=0.5, Q=100, max_iter=100):
+    def _init_(self, distance_matrix, num_ants, alpha=1, beta=2, rho=0.5, Q=100, max_iter=100):
         self.distance_matrix = distance_matrix
         self.num_ants = num_ants
         self.alpha = alpha
@@ -216,7 +274,7 @@ def ant_system_solution(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         cities = data.get('cities')
-        
+        starting_city = data.get('starting_city')
         distances, city_names = calculate_distance_matrix(cities)
         
         distance_matrix = np.zeros((len(city_names), len(city_names)))
@@ -227,10 +285,14 @@ def ant_system_solution(request):
         
         ant_system = AntSystemNetworkX(distance_matrix, num_ants=len(city_names))
         best_route, shortest_distance = ant_system.run()
+        starting_city_index = city_names.index(starting_city)
+        # Reorder the route so that it starts from the specified starting city
+        best_route = best_route[starting_city_index:] + best_route[:starting_city_index]
+        
         
         # Convert indices of cities back to city names
         best_route_cities = [city_names[idx] for idx in best_route]
         
         return JsonResponse({'path': best_route_cities, 'total_distance': shortest_distance})
     else:
-        return JsonResponse({"error":"Method not allowed"}, status=405)
+        return JsonResponse({"error":"Method not allowed"},status=405)
