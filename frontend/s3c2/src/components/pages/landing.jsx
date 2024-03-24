@@ -1,4 +1,4 @@
-﻿const LandingPage = () => {
+﻿const LandingPage = ({ onLogoClick }) => { // Correctly destructured `onLogoClick` from props
   return (
     <div>
       <nav className="navbar  bg-light navbar-expand-lg py-lg-3 navbar-dark">
@@ -45,14 +45,17 @@
               </li>
             </ul>
             <ul className="navbar-nav ms-auto align-items-center">
-              <li className="nav-item me-0">
-                <img
-                  src="assets/images/chatbot.png"
-                  alt=""
-                  className="logo-dark logo-custom"
-                />
-              </li>
-            </ul>
+        <li className="nav-item me-0">
+          <img
+            src="assets/images/chatbot.png"
+            alt="Chatbot Logo"
+            className="logo-dark logo-custom"
+            onClick={onLogoClick} // This now correctly refers to the function passed as a prop
+            style={{ cursor: 'pointer' }} // Closing quote for cursor style
+          />
+        </li>
+      </ul>
+
           </div>
         </div>
       </nav>
