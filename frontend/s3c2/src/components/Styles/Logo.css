@@ -13,3 +13,76 @@
   width: 100px; /* Smaller size for the logo */
   height: auto; /* Maintain aspect ratio */
 }
+.gradient-title {
+  background: linear-gradient(45deg, #1D374C, #462756);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+/* Define animation keyframes */
+@keyframes transformToTravel {
+  0% {
+      transform: scale(1);
+  }
+
+  50% {
+      transform: scale(1.1);
+  }
+
+  100% {
+      transform: scale(1) translateX(100px);
+      opacity: 0;
+  }
+}
+
+/* Apply animation to the element */
+.transform-animation {
+  animation: transformToTravel 3s ease-out forwards;
+}
+
+/* Custom classes based on Coolors colors */
+.bg-coolors-1 {
+  background-color: #EDF0F5;
+}
+
+.bg-coolors-2 {
+  background-color: #a5a7ab;
+}
+
+.bg-coolors-3 {
+  background-color: #EFF0F8;
+}
+
+.text-coolors-1 {
+  color: #213e54;
+}
+
+
+.text-coolors-2 {
+  color: #384755;
+}
+
+.text-coolors-3 {
+  color: #462756;
+}
+
+
+/* Custom logo size */
+.logo-custom {
+  height: 100px;
+  /* Adjust this value as needed */
+}
+
+/* Adjust logo size on smaller screens */
+@media (max-width: 768px) {
+  .logo-custom {
+      height: 60px;
+      /* Smaller size for mobile */
+  }
+}
+
+.navbar-fixed {
+  position: fixed;
+  background: transparent;
+}

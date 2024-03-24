@@ -1,4 +1,6 @@
 ﻿﻿import axios from 'axios'
+import '../Styles/Logo.css'
+import Map from '../../components/Map/Map'
 ﻿const LandingPage = ({ onLogoClick }) => { // Correctly destructured `onLogoClick` from props
 
   const handleFileUpload = (event) => {
@@ -127,7 +129,9 @@
                   Start Your <span className="text-primary"> Mauritanian</span>
                   Tour
                 </h3>
+                <div className="row">
                 <div className="col-xl-6">
+
                   <div className="card">
                     <div className="card-body">
                       <form>
@@ -306,7 +310,17 @@
                       </form>
                     </div>
                   </div>
+                 
                 </div>
+                <div className='col-xl-6'>
+                  <div className="card">
+                    <div className="card-body">
+                      <Map/>
+                      <div id="map"></div>
+                    </div>
+                  </div>
+                  </div>
+                  </div>
               </div>
             </div>
           </div>
