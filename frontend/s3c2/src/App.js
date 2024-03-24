@@ -1,11 +1,11 @@
 import React from 'react';
-import LandingPage from './components/pages/LandingPage'; // Import LandingPage component
-import './App.css'; // Import your CSS file if needed
+import LandingPage from './components/pages/LandingPage'; 
+import './App.css'; 
 
 const App = () => {
   return (
     <div className="app">
-      <LandingPage /> {/* Display the LandingPage component */}
+      <LandingPage /> 
     </div>
   );
 };
