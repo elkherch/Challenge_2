@@ -62,7 +62,6 @@ def ask_about_algorithms(request):
 
 
         if any(keyword in response_message.lower() for keyword in ["algorithm", "salesman", "approximation", "ant colony algorithm", "aco"]):
-            # Inject city coordinates into the response
             response_message += f"\n\nCity Coordinates:\n{city_coordinates}"
             return Response({'response': response_message.strip()})
         else:
