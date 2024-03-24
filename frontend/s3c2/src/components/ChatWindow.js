@@ -18,12 +18,22 @@ const ChatWindow = ({ onClose }) => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSendMessage = async () => {
+    const handleChange = (e) => {
+        setInputText(e.target.value);
+    };
+
+    const handleSubmit = () => {
         if (!inputText.trim()) return;
 
         const newMessage = { id: messages.length + 1, text: inputText, sender: 'user' };
-        setMessages(messages => [...messages, newMessage]);
-        setInputText(''); // Clear input after sending
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setInputText('');
+    };
+
+    const handleSendMessage = async () => {
+        if (!inputText.trim()) return;
+
+        handleSubmit();
 
         try {
             const response = await fetch('http://127.0.0.1:8081/ask/', {
@@ -31,7 +41,7 @@ const ChatWindow = ({ onClose }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: inputText }),
+                body: JSON.stringify({ question: inputText }),
             });
 
             if (!response.ok) {
@@ -39,8 +49,8 @@ const ChatWindow = ({ onClose }) => {
             }
 
             const data = await response.json();
-            const botResponse = { id: messages.length + 2, text: data.reply, sender: 'bot' };
-            setMessages(messages => [...messages, botResponse]);
+            const botResponse = { id: messages.length + 2, text: data.response, sender: 'bot' };
+            setMessages((prevMessages) => [...prevMessages, botResponse]);
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
             // Optionally, handle errors by displaying a message in the UI
@@ -51,8 +61,8 @@ const ChatWindow = ({ onClose }) => {
         <div className="chat-window">
             <ChatHeader onMinimize={onClose} />
             
-            <div ref={webChatContainerRef} className="webchat-container" style={{ height: 'calc(100% - 40px)', width: '100%', overflowY: 'auto' }}>
-                {messages.map(message => (
+            <div ref={webChatContainerRef} className="webchat-container">
+                {messages.map((message) => (
                     <div key={message.id} style={{ textAlign: message.sender === 'user' ? 'right' : 'left' }}>
                         <div className="chat-message">{message.text}</div>
                     </div>
@@ -61,7 +71,7 @@ const ChatWindow = ({ onClose }) => {
             <div className="chat-input-container" style={{ padding: '10px' }}>
                 <input
                     value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
+                    onChange={handleChange}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     className="chat-input"
                     style={{ width: 'calc(100% - 100px)', marginRight: '10px' }}

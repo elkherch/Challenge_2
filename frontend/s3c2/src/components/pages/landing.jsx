@@ -1,5 +1,6 @@
-﻿import axios from 'axios'
-const LandingPage = () => {
+﻿﻿import axios from 'axios'
+﻿const LandingPage = ({ onLogoClick }) => { // Correctly destructured `onLogoClick` from props
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
@@ -67,14 +68,17 @@ const LandingPage = () => {
               </li>
             </ul>
             <ul className="navbar-nav ms-auto align-items-center">
-              <li className="nav-item me-0">
-                <img
-                  src="assets/images/chatbot.png"
-                  alt=""
-                  className="logo-dark logo-custom"
-                />
-              </li>
-            </ul>
+        <li className="nav-item me-0">
+          <img
+            src="assets/images/chatbot.png"
+            alt="Chatbot Logo"
+            className="logo-dark logo-custom"
+            onClick={onLogoClick} // This now correctly refers to the function passed as a prop
+            style={{ cursor: 'pointer' }} // Closing quote for cursor style
+          />
+        </li>
+      </ul>
+
           </div>
         </div>
       </nav>
