@@ -99,6 +99,7 @@ class AntSystemNetworkX:
         self.G = nx.complete_graph(self.num_cities)
         self.pheromone_matrix = np.ones((self.num_cities, self.num_cities))
         np.fill_diagonal(self.pheromone_matrix, 0)  
+    
 
     def run(self):
         shortest_distance = float('inf')
@@ -132,6 +133,8 @@ class AntSystemNetworkX:
             next_city = self._select_next_city(route, visited)
             route.append(next_city)
             visited[next_city] = True
+        route.append(start_city)
+        visited[start_city] = True
 
         return route
 
@@ -178,7 +181,7 @@ class AntSystemNetworkX:
             route_distance = sum(self.distance_matrix[route[i]][route[i+1]] for i in range(len(route)-1))
             for i in range(len(route)-1):
                 delta_pheromones[route[i]][route[i+1]] += self.Q / route_distance
-
+            delta_pheromones[route[-1]][route[0]] += self.Q / route_distance
         self.pheromone_matrix = (evaporation * self.pheromone_matrix) + delta_pheromones
 
     def _find_best_route(self, routes):
