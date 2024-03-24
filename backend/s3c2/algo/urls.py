@@ -5,4 +5,5 @@ urlpatterns = [
     path('calculate-distances/', views.calculate_distances, name='calculate_distances'),
     path('tsp-solution/', views.tsp_solution, name='tsp_solution'),
     path('ant-system-solution/', views.ant_system_solution, name='ant_system_solution'),
+    path('upload/', views.upload_and_read_excel, name='upload_excel'),
 ]

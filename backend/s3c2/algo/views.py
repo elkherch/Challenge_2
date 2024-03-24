@@ -10,7 +10,24 @@ import networkx as nx
 
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-# Create your views here.
+from rest_framework.decorators import api_view
+from rest_framework.parsers import FileUploadParser
+import openpyxl
+
+@api_view(['POST'])
+def upload_and_read_excel(request):
+    if 'file' not in request.FILES:
+        return JsonResponse({'error': 'No file uploaded.'}, status=400)
+    
+    excel_file = request.FILES['file']
+    workbook = openpyxl.load_workbook(excel_file)
+    sheet = workbook.active
+    cities = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        city_name = row[0]  # Assuming city names are in the first column
+        cities.append(city_name)
+    
+    return JsonResponse({'cities': cities})
 
 def read_cities_from_excel(excel_path):
     wb = openpyxl.load_workbook(excel_path)
