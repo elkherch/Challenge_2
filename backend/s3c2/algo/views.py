@@ -10,7 +10,22 @@ import networkx as nx
 
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-# Create your views here.
+from rest_framework.decorators import api_view
+from rest_framework.parsers import FileUploadParser
+import openpyxl
+def index(request):
+    return render(request, 'index.html')
+@api_view(['POST'])
+def upload_and_read_excel(request):
+    if 'file' not in request.FILES:
+        return JsonResponse({'error': 'No file uploaded.'}, status=400)
+    
+    excel_file = request.FILES['file']
+
+    cities=read_cities_from_excel(excel_file)
+    
+    
+    return JsonResponse({'cities': cities})
 
 def read_cities_from_excel(excel_path):
     wb = openpyxl.load_workbook(excel_path)
@@ -83,7 +98,7 @@ def tsp_solution(request):
         return JsonResponse({'path': path, 'total_distance': total_distance})
     else:
         return JsonResponse({"error":"method not valide"},status=400)
-import numpy as np
+import  numpy as np
 import networkx as nx
 
 class AntSystemNetworkX:
@@ -216,6 +231,6 @@ def ant_system_solution(request):
         # Convert indices of cities back to city names
         best_route_cities = [city_names[idx] for idx in best_route]
         
-        return JsonResponse({'best_route': best_route_cities, 'shortest_distance': shortest_distance})
+        return JsonResponse({'path': best_route_cities, 'total_distance': shortest_distance})
     else:
         return JsonResponse({"error":"Method not allowed"}, status=405)
