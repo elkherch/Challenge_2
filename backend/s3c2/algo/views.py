@@ -13,7 +13,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.parsers import FileUploadParser
 import openpyxl
-
+def index(request):
+    return render(request, 'index.html')
 @api_view(['POST'])
 def upload_and_read_excel(request):
     if 'file' not in request.FILES:
@@ -227,7 +228,7 @@ def ant_system_solution(request):
         ant_system = AntSystemNetworkX(distance_matrix, num_ants=len(city_names))
         best_route, shortest_distance = ant_system.run()
         
-        # Convert indices of cities back to city names
+       
         best_route_cities = [city_names[idx] for idx in best_route]
         
         return JsonResponse({'best_route': best_route_cities, 'shortest_distance': shortest_distance})
