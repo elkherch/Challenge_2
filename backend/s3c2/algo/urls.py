@@ -7,6 +7,7 @@ urlpatterns = [
     path('ant-system-solution/', views.ant_system_solution, name='ant_system_solution'),
     path('upload/', views.upload_and_read_excel, name='upload_excel'),
     path('ask/', views.ask_about_algorithms, name='ask_about_algorithms'),
+     path('run-ant-colony/', views.run_ant_colony_solver, name='run_ant_colony_solver'),
      path('', views.index, name='index'),
 
 ]
