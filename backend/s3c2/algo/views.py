@@ -730,7 +730,6 @@ def upload_and_read_excel(request):
 
     cities=read_cities_from_excel(excel_file)
     
-    
     return JsonResponse({'cities': cities})
 
 def read_cities_from_excel(excel_path):
